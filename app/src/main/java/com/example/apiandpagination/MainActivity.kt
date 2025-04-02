@@ -5,7 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.example.apiandpagination.Modals.APIInterface
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.apiandpagination.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
      private lateinit var viewModel: UserViewModel
-    private val adapter = UsersAdapter(mutableListOf())
+    //private val adapter = UsersAdapter(mutableListOf())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,12 +21,15 @@ class MainActivity : AppCompatActivity() {
         val retrofitInstance = APIInterface.getInstance()
         val mainRepository = MainRepository(retrofitInstance)
 
-        binding.rv.adapter = adapter
+
 
         viewModel = ViewModelProvider(this,ViewModelFactory(mainRepository))[UserViewModel::class.java]
 
         viewModel.user.observe(this) { user ->
-            adapter.setUser(user)
+            val adapter =UsersAdapter(user)
+            binding.rv.adapter = adapter
+            binding.rv.layoutManager = LinearLayoutManager(this)
+
         }
 
         viewModel.error.observe(this){
