@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this,ViewModelFactory(mainRepository))[UserViewModel::class.java]
 
-        viewModel.user.observe(this) { user ->
-            val adapter =UsersAdapter(user)
+        viewModel.id.observe(this) {
+            val adapter =UsersAdapter(it)
             binding.rv.adapter = adapter
             binding.rv.layoutManager = LinearLayoutManager(this)
 

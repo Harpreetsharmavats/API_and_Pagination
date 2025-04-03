@@ -1,7 +1,6 @@
 package com.example.apiandpagination
 
-import com.example.apiandpagination.Modals.User
-import com.example.apiandpagination.Modals.UserResponse
+import com.example.apiandpagination.Modals.RandomApiItem
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -9,18 +8,18 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface APIInterface {
-    @GET("users")
+    @GET("api/users/random_user")
      suspend fun getUser(
-        @Query("page") quantity: Int = 500
-     ) : Response<List<UserResponse>>
+        @Query("size") result: Int = 100,
+     ) : Response<List<RandomApiItem>>
 companion object{
     private var apiInterface: APIInterface? = null
-    private const val baseUrl = "https://fakerapi.it/"
+    private const val BASE_URL = "https://random-data-api.com/"
 
     fun getInstance(): APIInterface {
         if (apiInterface == null) {
             val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 

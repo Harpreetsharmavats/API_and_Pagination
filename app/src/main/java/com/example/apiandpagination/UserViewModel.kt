@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.apiandpagination.Modals.User
+import com.example.apiandpagination.Modals.RandomApiItem
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 
 class UserViewModel constructor(private val mainRepository: MainRepository) : ViewModel() {
     val error = MutableLiveData<String>()
-    val user = MutableLiveData<List<User>>()
+    val id = MutableLiveData<List<RandomApiItem>>()
     val loading = MutableLiveData<Boolean>()
     var job: Job? = null
     private var currentPage = 1
@@ -26,19 +26,13 @@ class UserViewModel constructor(private val mainRepository: MainRepository) : Vi
     }
 
    fun getUser(){
-       if (isLoading || isLastPage) return
+
        loading.postValue(true)
        job = viewModelScope.launch(Dispatchers.IO + exceptionHandler){
-           val response = mainRepository.getUser(currentPage)
+           val response = mainRepository.getUser()
            withContext(Dispatchers.Main){
                if (response.isSuccessful){
-                   response.body().let {
-                       val currentList = user.value?.toMutableList()
-
-
-                       currentPage++
-
-                   }
+                   id.postValue(response.body())
                    Log.d("Fetch","success")
                        loading.value = false
                }else{
