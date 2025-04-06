@@ -1,20 +1,22 @@
 package com.example.apiandpagination
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.example.apiandpagination.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
      private lateinit var viewModel: UserViewModel
-    //private val adapter = UsersAdapter(mutableListOf())
-
+private val adapter = UsersAdapter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -24,27 +26,15 @@ class MainActivity : AppCompatActivity() {
 
 
         viewModel = ViewModelProvider(this,ViewModelFactory(mainRepository))[UserViewModel::class.java]
+        binding.rv.adapter = adapter
+        binding.rv.layoutManager = LinearLayoutManager(this@MainActivity)
+      lifecycleScope.launch {
+          viewModel.userPagingFlow.collectLatest {
+              Log.d("Fetch","DAta fetched")
+             adapter.submitData(it)
 
-        viewModel.id.observe(this) {
-            val adapter =UsersAdapter(it)
-            binding.rv.adapter = adapter
-            binding.rv.layoutManager = LinearLayoutManager(this)
-
-        }
-
-        viewModel.error.observe(this){
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-        }
-
-        viewModel.loading.observe(this){
-            if (it){
-                binding.progressBar.visibility =View.VISIBLE
-            }else{
-                binding.progressBar.visibility = View.GONE
-            }
-        }
-
-        viewModel.getUser()
+          }
+      }
 
 
     }

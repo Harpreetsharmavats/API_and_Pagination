@@ -1,3 +1,3 @@
 package com.example.apiandpagination.Modals
 
-class RandomApi : ArrayList<RandomApiItem>()
+class Users : ArrayList<UsersItem>()
