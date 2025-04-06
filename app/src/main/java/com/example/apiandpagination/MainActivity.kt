@@ -28,7 +28,11 @@ private val adapter = UsersAdapter()
         viewModel = ViewModelProvider(this,ViewModelFactory(mainRepository))[UserViewModel::class.java]
         binding.rv.adapter = adapter
         binding.rv.layoutManager = LinearLayoutManager(this@MainActivity)
-      lifecycleScope.launch {
+        binding.rv.adapter = adapter.withLoadStateFooter(
+            footer = LoaderAdapter { adapter.retry() }
+        )
+
+        lifecycleScope.launch {
           viewModel.userPagingFlow.collectLatest {
               Log.d("Fetch","DAta fetched")
              adapter.submitData(it)
@@ -38,4 +42,6 @@ private val adapter = UsersAdapter()
 
 
     }
+
+
 }
